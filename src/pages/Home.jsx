@@ -1,109 +1,124 @@
 import { useNavigate } from 'react-router-dom'
-import { GitBranch, BookOpen, MessageCircle, Brain, ChevronRight } from 'lucide-react'
-import FactStrip from '../components/FactStrip'
+import { Brain, MessageCircle } from 'lucide-react'
+import { stats, facts, features } from '../data/mockData'
 import StatusBadge from '../components/StatusBadge'
-import { useContext } from 'react'
-import { AppContext } from '../context/AppContext'
-const quickCards = [
-  { icon: GitBranch,     color: '#FF9933', title: 'Election Timeline', subtitle: '9 phases explained',   path: '/timeline' },
-  { icon: BookOpen,      color: '#4A7FE8', title: 'How to Vote',       subtitle: 'Step by step guide',   path: '/guide'    },
-  { icon: MessageCircle, color: '#C8F135', title: 'Ask ElectIQ AI',    subtitle: 'Get instant answers',  path: '/chat'     },
-  { icon: Brain,         color: '#7C6AFA', title: 'Take the Quiz',     subtitle: 'Test your knowledge',  path: '/quiz'     },
-]
 
 export default function Home() {
   const navigate = useNavigate()
-  const { electionTypes } = useContext(AppContext)
 
   return (
-    <div className="page-enter py-5 md:py-8 lg:py-10">
-      {/* Hero */}
-      <div style={{ marginBottom: '24px' }}>
-        <h1 className="text-4xl md:text-5xl lg:text-6xl" style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, color: '#FFFFFF', lineHeight: 1.1 }}>
-          Elect<span style={{ color: '#FF9933' }}>I</span>Q
+    <div className="page-enter flex flex-col gap-12">
+
+      {/* ── MASTHEAD ─────────────────────────── */}
+      <section className="text-center py-10 sm:py-14">
+        <span className="inline-flex items-center gap-2 bg-orange-50 border border-orange-200 text-saffron text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-6">
+          <span className="w-1.5 h-1.5 rounded-full bg-saffron pulse" />
+          2024 Election Edition
+        </span>
+
+        <h1 className="font-display text-6xl sm:text-7xl lg:text-8xl font-bold text-dark leading-tight tracking-tight">
+          Elect<span className="text-saffron">I</span>Q
         </h1>
-        <p style={{ fontSize: '14px', color: '#6B6B7A', marginTop: '6px' }}>India's elections, explained simply.</p>
-        <div style={{ marginTop: '14px', width: '60px', height: '2px', background: 'linear-gradient(to right, #FF9933, #1A4FBA)', borderRadius: '2px' }} />
-      </div>
 
-      {/* Fact Strip */}
-      <FactStrip />
-
-      {/* Election Types */}
-      <div style={{ marginTop: '28px' }}>
-        <p style={{ fontSize: '11px', color: '#6B6B7A', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '12px', fontWeight: 500 }}>
-          Election Types
+        <p className="mt-4 text-base sm:text-lg text-muted max-w-lg mx-auto leading-relaxed">
+          The simplest way to understand India's elections. Data-driven, authoritative, and free.
         </p>
-        {/* Mobile: horizontal scroll | md+: 3-col grid | lg+: 5-col grid */}
-        <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
-          {electionTypes.map((type) => <ElectionCard key={type.id} type={type} />)}
-        </div>
-        <div className="flex md:hidden no-scrollbar" style={{ gap: '12px', overflowX: 'auto', paddingBottom: '4px' }}>
-          {electionTypes.map((type) => <ElectionCard key={type.id} type={type} mobile />)}
-        </div>
-      </div>
 
-      {/* Quick Entry Grid */}
-      <div style={{ marginTop: '28px' }}>
-        <p style={{ fontSize: '11px', color: '#6B6B7A', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '12px', fontWeight: 500 }}>
-          Explore
-        </p>
-        {/* 2-col on mobile, 4-col on sm+ */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
-          {quickCards.map(({ icon: Icon, color, title, subtitle, path }) => (
-            <div
-              key={path}
-              className="pressable"
-              onClick={() => navigate(path)}
-              style={{
-                background: '#13131E',
-                border: '1px solid rgba(255,255,255,0.07)',
-                borderRadius: '16px',
-                padding: '20px',
-                display: 'flex',
-                flexDirection: 'column',
-                position: 'relative',
-                minHeight: '120px',
-              }}
-            >
-              <Icon size={22} color={color} strokeWidth={1.5} />
-              <p style={{ fontSize: '14px', color: '#F0F0F0', fontWeight: 500, marginTop: '14px' }}>{title}</p>
-              <p style={{ fontSize: '11px', color: '#6B6B7A', marginTop: '4px' }}>{subtitle}</p>
-              <ChevronRight size={14} color="#6B6B7A" style={{ position: 'absolute', bottom: '16px', right: '16px' }} />
+        <div className="mt-6 flex justify-center items-center gap-6 text-xs font-mono font-semibold text-muted uppercase tracking-widest">
+          <span>🗳️ 969M Voters</span>
+          <span className="w-1 h-1 rounded-full bg-surface3" />
+          <span>🏛️ 543 Seats</span>
+          <span className="w-1 h-1 rounded-full bg-surface3" />
+          <span>📅 7 Phases</span>
+        </div>
+      </section>
+
+      {/* ── STATS GRID ───────────────────────── */}
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {stats.map((stat, i) => {
+          const color = {
+            saffron: 'text-saffron',
+            ashoka:  'text-ashoka',
+            success: 'text-success',
+            warning: 'text-warning',
+          }[stat.color] ?? 'text-dark'
+
+          return (
+            <div key={i} className="bg-white border border-surface3 rounded-2xl p-5 sm:p-6 flex flex-col gap-1">
+              <span className={`font-display text-4xl sm:text-5xl font-bold ${color}`}>{stat.value}</span>
+              <span className="text-sm font-semibold text-dark">{stat.label}</span>
+              <span className="text-xs text-muted font-mono">{stat.sub}</span>
             </div>
+          )
+        })}
+      </section>
+
+      {/* ── DID YOU KNOW ─────────────────────── */}
+      <section className="bg-orange-50 border border-orange-200 border-l-4 border-l-saffron rounded-2xl p-6 sm:p-8">
+        <p className="text-xs font-mono font-bold text-saffron uppercase tracking-widest mb-3">Did you know?</p>
+        <p className="text-sm sm:text-base text-dark leading-relaxed">{facts[0]}</p>
+        <div className="flex gap-2 mt-4">
+          {facts.map((_, i) => (
+            <div key={i} className={`rounded-full transition-all duration-300 ${i === 0 ? 'w-4 h-1.5 bg-saffron' : 'w-1.5 h-1.5 bg-surface3'}`} />
           ))}
         </div>
-      </div>
+      </section>
 
-      <div style={{ height: '16px' }} />
-    </div>
-  )
-}
+      {/* ── FEATURE CARDS ────────────────────── */}
+      <section>
+        <h2 className="text-sm font-bold text-dark uppercase tracking-widest mb-5 pl-3 border-l-4 border-saffron">
+          Explore ElectIQ
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          {features.map((f) => {
+            const isQuiz = f.icon === 'Brain'
+            const Icon   = isQuiz ? Brain : MessageCircle
+            const accent = isQuiz ? 'saffron' : 'ashoka'
 
-function ElectionCard({ type, mobile }) {
-  return (
-    <div
-      className="pressable"
-      style={{
-        minWidth: mobile ? '160px' : undefined,
-        background: '#13131E',
-        border: '1px solid rgba(255,255,255,0.07)',
-        borderRadius: '16px',
-        padding: '16px',
-        flexShrink: mobile ? 0 : undefined,
-      }}
-    >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: '22px' }}>{type.icon}</span>
-        <StatusBadge status="info" />
-      </div>
-      <p style={{ fontFamily: 'Syne, sans-serif', fontSize: '16px', color: '#F0F0F0', marginTop: '12px', fontWeight: 600 }}>{type.name}</p>
-      <p style={{ fontSize: '11px', color: '#6B6B7A', marginTop: '2px' }}>
-        {type.seats ? `${type.seats.toLocaleString()} seats` : 'Local bodies'}
-      </p>
-      <p style={{ fontSize: '11px', color: '#6B6B7A', marginTop: '8px', lineHeight: 1.45, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-        {type.description}
-      </p>
+            return (
+              <div
+                key={f.id}
+                onClick={() => navigate(f.href)}
+                className="bg-white border border-surface3 rounded-2xl p-6 sm:p-8 flex flex-col gap-5 cursor-pointer hover:border-saffron hover:shadow-md transition-all duration-200 group"
+              >
+                <div className="flex justify-between items-start">
+                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${isQuiz ? 'bg-orange-50 text-saffron' : 'bg-blue-50 text-ashoka'}`}>
+                    <Icon size={22} strokeWidth={2} />
+                  </div>
+                  <StatusBadge label={f.tag} variant={accent} />
+                </div>
+
+                <div>
+                  <h3 className="font-display text-xl font-semibold text-dark mb-2 group-hover:text-saffron transition-colors">
+                    {f.title}
+                  </h3>
+                  <p className="text-sm text-muted leading-relaxed">{f.description}</p>
+                </div>
+
+                <p className={`text-sm font-semibold ${isQuiz ? 'text-saffron' : 'text-ashoka'} mt-auto`}>
+                  Get Started →
+                </p>
+              </div>
+            )
+          })}
+        </div>
+      </section>
+
+      {/* ── HOW IT WORKS ─────────────────────── */}
+      <section className="grid grid-cols-1 sm:grid-cols-3 gap-6 py-4 border-t border-surface3">
+        {[
+          { n: '01', title: 'Take the Quiz',   desc: 'Answer 10 questions about Indian elections.' },
+          { n: '02', title: 'Learn as You Go', desc: 'Every answer includes a detailed explanation.' },
+          { n: '03', title: 'Ask the Expert',  desc: 'Dive deeper with our Indian politics AI.' },
+        ].map((s) => (
+          <div key={s.n} className="text-center p-5">
+            <span className="font-display text-4xl font-bold text-surface3">{s.n}</span>
+            <h4 className="text-sm font-bold text-dark mt-2">{s.title}</h4>
+            <p className="text-xs text-muted mt-1 leading-relaxed">{s.desc}</p>
+          </div>
+        ))}
+      </section>
+
     </div>
   )
 }

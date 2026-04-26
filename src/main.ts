@@ -1,4 +1,4 @@
-import './style.css'
+/* style.css removed — using index.css via main.jsx */
 import typescriptLogo from './assets/typescript.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'

@@ -1,65 +1,28 @@
-export default function ChatBubble({ message }) {
-  const isUser = message.role === 'user'
-
-  if (isUser) {
+export default function ChatBubble({ role, content, timestamp }) {
+  if (role === 'user') {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', marginBottom: '12px' }}>
-        <div
-          style={{
-            background: 'rgba(255,153,51,0.15)',
-            border: '1px solid rgba(255,153,51,0.2)',
-            borderRadius: '16px',
-            borderBottomRightRadius: '4px',
-            maxWidth: '78%',
-            padding: '12px 16px',
-            fontSize: '13px',
-            color: '#F0F0F0',
-            lineHeight: 1.5,
-          }}
-        >
-          {message.content}
+      <div className="flex justify-end">
+        <div className="max-w-xs sm:max-w-sm">
+          <div className="bg-saffron text-white rounded-2xl rounded-br-sm px-4 py-3 text-sm leading-relaxed">
+            {content}
+          </div>
+          <p className="text-xs text-muted mt-1 text-right">{timestamp}</p>
         </div>
-        <span style={{ fontSize: '10px', color: '#6B6B7A', marginTop: '4px' }}>{message.timestamp}</span>
       </div>
     )
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginBottom: '12px' }}>
-      <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-end', maxWidth: '82%' }}>
-        {/* Avatar */}
-        <div
-          style={{
-            width: '24px',
-            height: '24px',
-            borderRadius: '50%',
-            background: '#1A4FBA',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '12px',
-            flexShrink: 0,
-            marginBottom: '16px',
-          }}
-        >
-          ⚡
-        </div>
-        <div
-          style={{
-            background: '#1C1C2E',
-            border: '1px solid rgba(255,255,255,0.06)',
-            borderRadius: '16px',
-            borderBottomLeftRadius: '4px',
-            padding: '12px 16px',
-            fontSize: '13px',
-            color: '#F0F0F0',
-            lineHeight: 1.6,
-          }}
-        >
-          {message.content}
-        </div>
+    <div className="flex justify-start gap-3 items-start">
+      <div className="w-8 h-8 rounded-xl bg-ashoka flex items-center justify-center text-white text-xs font-mono flex-shrink-0 mt-0.5">
+        ⚡
       </div>
-      <span style={{ fontSize: '10px', color: '#6B6B7A', marginTop: '4px', paddingLeft: '32px' }}>{message.timestamp}</span>
+      <div className="max-w-xs sm:max-w-sm lg:max-w-md">
+        <div className="bg-white border border-surface3 rounded-2xl rounded-bl-sm px-4 py-3 text-sm leading-relaxed text-dark">
+          {content}
+        </div>
+        <p className="text-xs text-muted mt-1">{timestamp}</p>
+      </div>
     </div>
   )
 }
