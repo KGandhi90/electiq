@@ -1,9 +1,7 @@
-import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import StatusBadge from './StatusBadge'
 
-export default function TimelinePhase({ phase, defaultExpanded = false }) {
-  const [expanded, setExpanded] = useState(defaultExpanded)
+export default function TimelinePhase({ phase, isExpanded, onToggle }) {
 
   const nodeColor = {
     completed: '#00D68F',
@@ -60,11 +58,11 @@ export default function TimelinePhase({ phase, defaultExpanded = false }) {
       <div style={{ flex: 1, paddingLeft: '8px', paddingBottom: '8px' }}>
         <div
           className="pressable"
-          onClick={() => setExpanded(!expanded)}
+          onClick={onToggle}
           style={{
             background: '#13131E',
             border: phase.status === 'active' ? '1px solid rgba(255,153,51,0.4)' : '1px solid rgba(255,255,255,0.07)',
-            borderLeft: phase.status === 'active' ? '2px solid #FF9933' : undefined,
+            borderLeft: phase.status === 'active' && isExpanded ? '2px solid #FF9933' : undefined,
             borderRadius: '16px',
             padding: '14px',
           }}
@@ -80,7 +78,7 @@ export default function TimelinePhase({ phase, defaultExpanded = false }) {
               <ChevronDown
                 size={14}
                 color="#6B6B7A"
-                style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}
+                style={{ transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.25s ease' }}
               />
             </div>
           </div>
@@ -89,7 +87,7 @@ export default function TimelinePhase({ phase, defaultExpanded = false }) {
           <p style={{ fontSize: '11px', color: '#6B6B7A', marginTop: '4px', paddingLeft: '26px' }}>{phase.marker}</p>
 
           {/* Collapsible content */}
-          <div className={`collapsible${expanded ? ' open' : ''}`}>
+          <div className={`collapsible${isExpanded ? ' open' : ''}`}>
             <div style={{ paddingLeft: '26px', paddingTop: '12px' }}>
               <p style={{ fontSize: '13px', color: '#D0D0D0', lineHeight: 1.6 }}>{phase.description}</p>
               {/* Fact card */}

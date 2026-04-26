@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useContext } from 'react'
+import { AppContext } from '../context/AppContext'
 import GuideTab from '../components/GuideTab'
 import FlipCard from '../components/FlipCard'
 
@@ -180,7 +181,7 @@ const TAB_CONTENT = {
 }
 
 export default function Guide() {
-  const [activeTab, setActiveTab] = useState('register')
+  const { activeGuideTab, setActiveGuideTab } = useContext(AppContext)
 
   return (
     <div className="page-enter py-5 md:py-8">
@@ -190,11 +191,11 @@ export default function Guide() {
       </div>
 
       {/* Tab strip */}
-      <GuideTab tabs={TABS} activeTab={activeTab} onTabChange={setActiveTab} />
+      <GuideTab tabs={TABS} activeTab={activeGuideTab} onTabChange={setActiveGuideTab} />
 
       {/* Tab content — constrained to max-w-3xl on large screens */}
-      <div className="max-w-3xl mx-auto">
-        {TAB_CONTENT[activeTab]}
+      <div className="max-w-3xl mx-auto page-enter" key={activeGuideTab}>
+        {TAB_CONTENT[activeGuideTab]}
       </div>
     </div>
   )

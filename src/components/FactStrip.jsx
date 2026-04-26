@@ -1,8 +1,19 @@
-import { facts } from '../data/mockData'
+import { useContext, useEffect, useState } from 'react'
+import { AppContext } from '../context/AppContext'
+import { useFactStrip } from '../hooks/useFactStrip'
 
 export default function FactStrip() {
-  const currentIndex = 0
-  const fact = facts[currentIndex]
+  const { facts } = useContext(AppContext)
+  const { currentFact, currentIndex, totalFacts } = useFactStrip(facts)
+  const [fade, setFade] = useState(true)
+
+  useEffect(() => {
+    setFade(false)
+    const timeout = setTimeout(() => setFade(true), 50)
+    return () => clearTimeout(timeout)
+  }, [currentIndex])
+
+  if (!facts || facts.length === 0) return null
 
   return (
     <div
@@ -17,12 +28,12 @@ export default function FactStrip() {
       <div style={{ fontSize: '10px', color: '#FF9933', letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 600 }}>
         Did You Know
       </div>
-      <p style={{ fontSize: '13px', color: '#F0F0F0', marginTop: '8px', lineHeight: 1.55 }}>
-        {fact}
+      <p style={{ fontSize: '13px', color: '#F0F0F0', marginTop: '8px', lineHeight: 1.55, opacity: fade ? 1 : 0, transition: 'opacity 0.3s ease' }}>
+        {currentFact}
       </p>
       {/* Dot indicators */}
       <div style={{ display: 'flex', gap: '5px', marginTop: '12px', alignItems: 'center' }}>
-        {facts.map((_, i) => (
+        {Array.from({ length: totalFacts }).map((_, i) => (
           <div
             key={i}
             style={{

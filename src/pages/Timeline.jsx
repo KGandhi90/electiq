@@ -1,8 +1,11 @@
+import { useContext } from 'react'
+import { AppContext } from '../context/AppContext'
 import TimelinePhase from '../components/TimelinePhase'
 import StatusBadge from '../components/StatusBadge'
-import { timelinePhases } from '../data/mockData'
 
 export default function Timeline() {
+  const { timelinePhases, expandedPhase, setExpandedPhase } = useContext(AppContext)
+
   return (
     <div className="page-enter py-5 md:py-8">
       {/* Constrain timeline to readable width on large screens */}
@@ -28,7 +31,8 @@ export default function Timeline() {
             <TimelinePhase
               key={phase.id}
               phase={phase}
-              defaultExpanded={phase.id === 6}
+              isExpanded={expandedPhase === phase.id}
+              onToggle={() => setExpandedPhase(expandedPhase === phase.id ? null : phase.id)}
             />
           ))}
         </div>

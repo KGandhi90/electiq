@@ -2,8 +2,8 @@ import { useNavigate } from 'react-router-dom'
 import { GitBranch, BookOpen, MessageCircle, Brain, ChevronRight } from 'lucide-react'
 import FactStrip from '../components/FactStrip'
 import StatusBadge from '../components/StatusBadge'
-import { electionTypes } from '../data/mockData'
-
+import { useContext } from 'react'
+import { AppContext } from '../context/AppContext'
 const quickCards = [
   { icon: GitBranch,     color: '#FF9933', title: 'Election Timeline', subtitle: '9 phases explained',   path: '/timeline' },
   { icon: BookOpen,      color: '#4A7FE8', title: 'How to Vote',       subtitle: 'Step by step guide',   path: '/guide'    },
@@ -13,6 +13,7 @@ const quickCards = [
 
 export default function Home() {
   const navigate = useNavigate()
+  const { electionTypes } = useContext(AppContext)
 
   return (
     <div className="page-enter py-5 md:py-8 lg:py-10">
