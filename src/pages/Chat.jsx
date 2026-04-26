@@ -6,10 +6,14 @@ import ChatBubble from '../components/ChatBubble';
 import StatusBadge from '../components/StatusBadge';
 
 const CHIPS = [
-  'How do I register to vote?',
-  'What is EVM?',
-  'Lok Sabha vs Vidhan Sabha?',
-  'What is NOTA?',
+  "What is the anti-defection law?",
+  "How did 2024 election results pan out?",
+  "Explain President's Rule simply",
+  "What is the 10th Schedule?",
+  "How are EVMs tested for tampering?",
+  "Difference between NDA and INDIA alliance?",
+  "What powers does ECI actually have?",
+  "How does coalition government form?",
 ];
 
 export default function Chat() {
@@ -18,6 +22,7 @@ export default function Chat() {
     messages,
     input,
     isTyping,
+    error,
     setInput,
     sendMessage,
     handleKeyDown,
@@ -108,11 +113,24 @@ export default function Chat() {
             </div>
           </div>
         )}
+
+        {error && (
+          <div className="flex justify-start gap-3 items-start page-enter">
+            <div className="w-8 h-8 rounded-xl bg-danger flex items-center justify-center text-white text-xs font-mono flex-shrink-0 mt-0.5">
+              !
+            </div>
+            <div className="max-w-xs sm:max-w-sm lg:max-w-md">
+              <div className="bg-red-50 border-l-4 border-l-danger rounded-r-2xl rounded-bl-sm px-4 py-3 text-sm leading-relaxed text-danger">
+                {error}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ── QUICK CHIPS ──────────────────────── */}
       {messages.length <= 2 && (
-        <div className="flex flex-wrap gap-2 flex-shrink-0 page-enter transition-all" role="group" aria-label="Suggested questions">
+        <div className="flex overflow-x-auto gap-2 flex-shrink-0 page-enter transition-all pb-2 no-scrollbar" role="group" aria-label="Suggested questions">
           {CHIPS.map((chip) => (
             <button
               key={chip}

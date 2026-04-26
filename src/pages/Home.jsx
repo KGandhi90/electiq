@@ -1,15 +1,23 @@
-import { useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Brain, MessageCircle } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { useFactStrip } from '../hooks/useFactStrip';
 import { trackEvent } from '../utils/analytics';
 import StatusBadge from '../components/StatusBadge';
+import SkeletonHome from '../components/SkeletonHome';
 
 export default function Home() {
   const navigate = useNavigate();
   const { facts, stats, features } = useAppContext();
   const { currentFact, currentIndex, totalFacts, isVisible, goToFact } = useFactStrip(facts);
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(t);
+  }, []);
 
   const formattedDate = new Date().toLocaleDateString('en-IN', {
     weekday: 'long', year: 'numeric',
@@ -20,6 +28,8 @@ export default function Home() {
     trackEvent('Home', 'FeatureClicked', feature.title);
     navigate(feature.href);
   }, [navigate]);
+
+  if (isLoading) return <SkeletonHome />;
 
   return (
     <div className="page-enter flex flex-col gap-12">

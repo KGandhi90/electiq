@@ -36,3 +36,25 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #E8E4DC 25%,
+    #F0EDE8 50%,
+    #E8E4DC 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease infinite;
+  border-radius: 8px;
+}
+
+.focus-visible:focus {
+  outline: 2px solid #E8650A;
+  outline-offset: 2px;
+}

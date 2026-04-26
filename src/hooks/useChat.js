@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { trackEvent } from '../utils/analytics';
-import { getMockReply } from '../utils/helpers';
+import { sendToGemini } from '../api/geminiApi';
 
 /**
  * Manages chat state and mock AI responses.
@@ -11,6 +11,8 @@ export function useChat(seedMessages) {
   const [messages, setMessages] = useState([...seedMessages]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [apiHistory, setApiHistory] = useState([]);
+  const [error, setError] = useState(null);
 
   /**
    * Sends a user message and triggers mock reply.
@@ -21,7 +23,9 @@ export function useChat(seedMessages) {
     const text = (overrideText || input).trim();
     if (!text) return;
 
-    // Append user message
+    setError(null);
+
+    // 1. Add user message to UI
     const userMsg = {
       id:        Date.now(),
       role:      'user',
@@ -37,26 +41,47 @@ export function useChat(seedMessages) {
     }
     setIsTyping(true);
 
+    // 2. Track analytics
     trackEvent('Chat', 
       overrideText ? 'QuickReplyUsed' : 'MessageSent',
       overrideText || undefined
     );
 
-    // Simulate API delay
-    await new Promise(r => setTimeout(r, 1200));
+    // 3. Build updated history for API
+    const updatedHistory = [
+      ...apiHistory,
+      { role: 'user', content: text }
+    ];
 
-    const aiMsg = {
-      id:        Date.now() + 1,
-      role:      'assistant',
-      content:   getMockReply(text),
-      timestamp: new Date().toLocaleTimeString([], {
-        hour: '2-digit', minute: '2-digit'
-      }),
-    };
-    
-    setMessages(prev => [...prev, aiMsg]);
-    setIsTyping(false);
-  }, [input]);
+    try {
+      // 4. Call Gemini
+      const reply = await sendToGemini(text, apiHistory);
+
+      // 5. Add AI response to UI
+      const aiMsg = {
+        id:        Date.now() + 1,
+        role:      'assistant',
+        content:   reply,
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: '2-digit', minute: '2-digit'
+        }),
+      };
+      
+      setMessages(prev => [...prev, aiMsg]);
+      
+      // 6. Update API history
+      setApiHistory([
+        ...updatedHistory,
+        { role: 'model', content: reply }
+      ]);
+      
+    } catch (err) {
+      setError('Something went wrong. Please try again.');
+      console.error('Chat error:', err);
+    } finally {
+      setIsTyping(false);
+    }
+  }, [input, apiHistory]);
 
   /**
    * Handles Enter key — sends without Shift.
@@ -73,6 +98,7 @@ export function useChat(seedMessages) {
     messages,
     input,
     isTyping,
+    error,
     setInput,
     sendMessage,
     handleKeyDown,

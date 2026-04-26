@@ -9,8 +9,12 @@ import Chat from './pages/Chat'
 function Layout() {
   return (
     <div className="min-h-screen bg-base">
+      <a href="#main-content" 
+         className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-saffron text-white px-4 py-2 rounded-lg z-50 text-sm font-medium">
+        Skip to main content
+      </a>
       <Navbar />
-      <main className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+      <main id="main-content" className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
         <Outlet />
       </main>
     </div>
@@ -21,6 +25,12 @@ function AppRoutes() {
   const location = useLocation()
 
   useEffect(() => {
+    const titles = {
+      '/':       'ElectIQ — Indian Elections Guide',
+      '/quiz':   'Election Quiz — ElectIQ',
+      '/chat':   'Ask the Expert — ElectIQ',
+    }
+    document.title = titles[location.pathname] || 'ElectIQ'
     trackPageView(location.pathname, document.title)
   }, [location])
 
