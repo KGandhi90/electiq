@@ -1,4 +1,6 @@
-export default function StatusBadge({ label, variant = 'muted' }) {
+import { memo } from 'react';
+
+const StatusBadge = memo(function StatusBadge({ label, variant = 'muted' }) {
   const variants = {
     saffron: 'bg-orange-50 text-saffron border border-orange-200',
     ashoka:  'bg-blue-50 text-ashoka border border-blue-200',
@@ -13,4 +15,6 @@ export default function StatusBadge({ label, variant = 'muted' }) {
       {label}
     </span>
   )
-}
+});
+
+export default StatusBadge;

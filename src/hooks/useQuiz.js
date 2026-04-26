@@ -1,78 +1,131 @@
-import { useState } from 'react'
+import { useState, useCallback, useMemo } from 'react';
+import { trackEvent } from '../utils/analytics';
+import { getScoreResult, formatShareText } from '../utils/helpers';
 
+/**
+ * Manages the complete quiz flow.
+ * @param {Array} questions - Quiz question array
+ */
 export function useQuiz(questions) {
-  const [quizPhase, setQuizPhase] = useState('start')
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [selectedOption, setSelectedOption] = useState(null)
-  const [isAnswered, setIsAnswered] = useState(false)
-  const [score, setScore] = useState(0)
-  const [answers, setAnswers] = useState([])
+  const [quizPhase, setQuizPhase] = useState('start'); // 'start' | 'question' | 'results'
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [isAnswered, setIsAnswered] = useState(false);
+  const [score, setScore] = useState(0);
+  const [answers, setAnswers] = useState([]);
 
-  const startQuiz = () => {
-    setQuizPhase('question')
-    setCurrentIndex(0)
-    setSelectedOption(null)
-    setIsAnswered(false)
-    setScore(0)
-    setAnswers([])
-  }
+  /**
+   * Starts the quiz from the beginning.
+   * Resets all state and fires GA event.
+   */
+  const startQuiz = useCallback(() => {
+    setQuizPhase('question');
+    setCurrentIndex(0);
+    setSelectedOption(null);
+    setIsAnswered(false);
+    setScore(0);
+    setAnswers([]);
+    trackEvent('Quiz', 'Started');
+  }, []);
 
-  const selectOption = (optionIndex) => {
-    if (isAnswered) return
-    const isCorrect = optionIndex === questions[currentIndex].correct
-    setSelectedOption(optionIndex)
-    setIsAnswered(true)
-    if (isCorrect) setScore((prev) => prev + 1)
-    setAnswers((prev) => [
-      ...prev,
-      {
-        questionId: questions[currentIndex].id,
-        selected: optionIndex,
-        correct: questions[currentIndex].correct,
-        wasCorrect: isCorrect,
-      },
-    ])
-  }
+  /**
+   * Records the selected option and reveals answer.
+   * @param {number} optionIndex - Selected option (0-3)
+   */
+  const selectOption = useCallback((optionIndex) => {
+    if (isAnswered) return;
+    const correct = questions[currentIndex].correct;
+    const wasCorrect = optionIndex === correct;
+    
+    setSelectedOption(optionIndex);
+    setIsAnswered(true);
+    
+    if (wasCorrect) setScore(prev => prev + 1);
+    
+    setAnswers(prev => [...prev, {
+      questionId: questions[currentIndex].id,
+      selected:   optionIndex,
+      correct,
+      wasCorrect,
+    }]);
+    
+    trackEvent(
+      'Quiz', 
+      'Answered',
+      `Q${currentIndex + 1} - ${wasCorrect ? 'Correct' : 'Wrong'}`
+    );
+  }, [isAnswered, currentIndex, questions]);
 
-  const nextQuestion = () => {
-    if (!isAnswered) return
+  /**
+   * Advances to next question or shows results.
+   */
+  const nextQuestion = useCallback(() => {
+    if (!isAnswered) return;
     if (currentIndex < questions.length - 1) {
-      setCurrentIndex((prev) => prev + 1)
-      setSelectedOption(null)
-      setIsAnswered(false)
+      setCurrentIndex(prev => prev + 1);
+      setSelectedOption(null);
+      setIsAnswered(false);
     } else {
-      setQuizPhase('results')
+      setQuizPhase('results');
+      trackEvent(
+        'Quiz', 
+        'Completed',
+        `Score: ${score}/10`
+      );
     }
-  }
+  }, [isAnswered, currentIndex, questions.length, score]);
 
-  const retakeQuiz = () => {
-    setQuizPhase('start')
-    setCurrentIndex(0)
-    setSelectedOption(null)
-    setIsAnswered(false)
-    setScore(0)
-    setAnswers([])
-  }
+  /**
+   * Resets quiz back to start screen.
+   */
+  const retakeQuiz = useCallback(() => {
+    setQuizPhase('start');
+    setCurrentIndex(0);
+    setSelectedOption(null);
+    setIsAnswered(false);
+    setScore(0);
+    setAnswers([]);
+    trackEvent('Quiz', 'Retaken');
+  }, []);
 
-  const getOptionState = (optionIndex) => {
-    if (!isAnswered) return 'default'
-    if (optionIndex === questions[currentIndex].correct) return 'correct'
-    if (optionIndex === selectedOption && optionIndex !== questions[currentIndex].correct) return 'wrong'
-    return 'default'
-  }
+  /**
+   * Returns the display state for an option button.
+   * @param {number} optionIndex
+   * @returns {'default'|'correct'|'wrong'|'reveal'}
+   */
+  const getOptionState = useCallback((optionIndex) => {
+    if (!isAnswered) return 'default';
+    const correct = questions[currentIndex].correct;
+    if (optionIndex === correct) return 'correct';
+    if (optionIndex === selectedOption) return 'wrong';
+    return 'default';
+  }, [isAnswered, currentIndex, selectedOption, questions]);
 
-  let scoreLabel = 'Keep learning! 📚'
-  let scoreColor = '#6B6B7A'
-  if (score >= 4 && score <= 6) {
-    scoreLabel = 'Not bad! 👍'
-    scoreColor = '#FFB547'
-  } else if (score >= 7 && score <= 9) {
-    scoreLabel = 'Election Expert! 🏆'
-    scoreColor = '#00D68F'
-  } else if (score === 10) {
-    scoreLabel = 'Perfect Score! 🇮🇳'
-    scoreColor = '#C8F135'
-  }
+  /**
+   * Shares or copies the quiz score.
+   */
+  const shareScore = useCallback(async () => {
+    const text = formatShareText(score);
+    let copied = false;
+    if (navigator.share) {
+      try {
+        await navigator.share({ text });
+      } catch (err) {
+        console.error('Error sharing', err);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(text);
+        copied = true;
+      } catch (err) {
+        console.error('Failed to copy', err);
+      }
+    }
+    trackEvent('Quiz', 'Shared');
+    return copied; // Returns true if copied to clipboard
+  }, [score]);
+
+  const scoreResult = useMemo(() => getScoreResult(score), [score]);
 
   return {
     quizPhase,
@@ -81,14 +134,15 @@ export function useQuiz(questions) {
     isAnswered,
     score,
     answers,
+    scoreResult,
+    currentQuestion: questions ? questions[currentIndex] : null,
+    totalQuestions: questions ? questions.length : 0,
+    progressPercent: questions ? ((currentIndex) / questions.length) * 100 : 0,
     startQuiz,
     selectOption,
     nextQuestion,
     retakeQuiz,
+    shareScore,
     getOptionState,
-    scoreLabel,
-    scoreColor,
-    currentQuestion: questions[currentIndex],
-    totalQuestions: questions.length,
-  }
+  };
 }

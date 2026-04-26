@@ -1,4 +1,6 @@
-import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
+import { initAnalytics, trackPageView } from './utils/analytics'
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
 import Quiz from './pages/Quiz'
@@ -15,16 +17,33 @@ function Layout() {
   )
 }
 
+function AppRoutes() {
+  const location = useLocation()
+
+  useEffect(() => {
+    trackPageView(location.pathname, document.title)
+  }, [location])
+
+  return (
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="/"     element={<Home />} />
+        <Route path="/quiz" element={<Quiz />} />
+        <Route path="/chat" element={<Chat />} />
+      </Route>
+    </Routes>
+  )
+}
+
 export default function App() {
+  useEffect(() => {
+    initAnalytics()
+  }, [])
+
   return (
     <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/"     element={<Home />} />
-          <Route path="/quiz" element={<Quiz />} />
-          <Route path="/chat" element={<Chat />} />
-        </Route>
-      </Routes>
+      <AppRoutes />
     </BrowserRouter>
   )
 }
+
