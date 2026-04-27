@@ -12,13 +12,6 @@ export default function Home() {
   const { facts, stats, features } = useAppContext();
   const { currentFact, currentIndex, totalFacts, isVisible, goToFact } = useFactStrip(facts);
 
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const t = setTimeout(() => setIsLoading(false), 800);
-    return () => clearTimeout(t);
-  }, []);
-
   const formattedDate = new Date().toLocaleDateString('en-IN', {
     weekday: 'long', year: 'numeric',
     month:   'long', day:  'numeric'
@@ -28,8 +21,6 @@ export default function Home() {
     trackEvent('Home', 'FeatureClicked', feature.title);
     navigate(feature.href);
   }, [navigate]);
-
-  if (isLoading) return <SkeletonHome />;
 
   return (
     <div className="page-enter flex flex-col gap-12">
@@ -81,12 +72,11 @@ export default function Home() {
       {/* ── DID YOU KNOW ─────────────────────── */}
       <section className="bg-orange-50 border border-orange-200 border-l-4 border-l-saffron rounded-2xl p-6 sm:p-8" role="region" aria-label="Election facts" aria-live="polite">
         <p className="text-xs font-mono font-bold text-saffron uppercase tracking-widest mb-3">Did you know?</p>
-        <p 
-          className={`text-sm sm:text-base text-dark leading-relaxed transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`} 
-          aria-atomic="true"
-        >
-          {currentFact}
-        </p>
+        <div style={{ opacity: isVisible ? 1 : 0, transition: 'opacity 300ms ease-in-out' }}>
+          <p className="text-sm sm:text-base text-dark leading-relaxed" aria-atomic="true">
+            {currentFact}
+          </p>
+        </div>
         <div className="flex gap-2 mt-4">
           {facts.map((_, i) => (
             <button 
