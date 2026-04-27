@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { trackEvent } from '../utils/analytics';
 import { getScoreResult, formatShareText } from '../utils/helpers';
+import { saveQuizScore } from '../api/firebase';
 
 /**
  * Manages the complete quiz flow.
@@ -72,6 +73,8 @@ export function useQuiz(questions) {
         'Completed',
         `Score: ${score}/10`
       );
+      // Save score to Firebase (non-blocking)
+      saveQuizScore(score);
     }
   }, [isAnswered, currentIndex, questions.length, score]);
 

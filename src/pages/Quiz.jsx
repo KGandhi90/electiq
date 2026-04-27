@@ -3,6 +3,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { useQuiz } from '../hooks/useQuiz';
 import QuizCard from '../components/QuizCard';
+import Leaderboard from '../components/Leaderboard';
 
 export default function Quiz() {
   const { quizQuestions } = useAppContext();
@@ -203,6 +204,8 @@ export default function Quiz() {
               </div>
             </div>
           </div>
+
+          <Leaderboard userScore={score} />
 
           {/* Answer Review Section */}
           <div className="mt-8 border border-surface3 rounded-2xl bg-white overflow-hidden">

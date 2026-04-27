@@ -82,6 +82,7 @@ A newspaper-style masthead with live rotating facts, key election statistics, an
 | Routing | React Router v6 |
 | AI | Google Gemini API (gemini-2.0-flash) |
 | Analytics | Google Analytics 4 (react-ga4) |
+| Database/Auth | Firebase Firestore + Anonymous Auth |
 | Icons | Lucide React |
 | Fonts | Playfair Display · Inter · JetBrains Mono |
 | PWA | vite-plugin-pwa |
@@ -118,6 +119,11 @@ Custom events are tracked at every meaningful user action:
 | Quick reply used | Chat | QuickReplyUsed |
 | Feature card clicked | Home | FeatureClicked |
 | Render error caught | App | RenderError |
+
+### 3. Firebase Firestore & Auth
+Firebase is used to build a global leaderboard system without requiring user sign-ups:
+- **Anonymous Auth:** Automatically signs users in silently in the background when they complete a quiz.
+- **Firestore:** Saves each completed quiz score and timestamp to the `quizScores` collection. It then queries the aggregate data to render a live distribution chart of how others scored worldwide.
 
 ---
 
@@ -221,6 +227,14 @@ VITE_GEMINI_API_KEY=your_gemini_api_key_here
 
 # Google Analytics 4 — optional, app works without it
 VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+
+# Firebase — required for live leaderboard
+VITE_FIREBASE_API_KEY=your_key
+VITE_FIREBASE_AUTH_DOMAIN=your_domain
+VITE_FIREBASE_PROJECT_ID=your_id
+VITE_FIREBASE_STORAGE_BUCKET=your_bucket
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
 ```
 
 > If `VITE_GEMINI_API_KEY` is not set, the chat falls back to keyword-based mock responses so the UI remains fully functional during development.
