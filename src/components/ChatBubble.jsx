@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import PropTypes from 'prop-types';
 
 const ChatBubble = memo(function ChatBubble({ role, content, timestamp }) {
   if (role === 'user') {
@@ -28,5 +29,11 @@ const ChatBubble = memo(function ChatBubble({ role, content, timestamp }) {
     </div>
   )
 });
+
+ChatBubble.propTypes = {
+  role:      PropTypes.oneOf(['user', 'assistant']).isRequired,
+  content:   PropTypes.string.isRequired,
+  timestamp: PropTypes.string.isRequired,
+};
 
 export default ChatBubble;

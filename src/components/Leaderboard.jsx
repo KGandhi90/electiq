@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { getScoreDistribution } from '../api/firebase';
 
 export default function Leaderboard({ userScore }) {
@@ -78,3 +79,7 @@ export default function Leaderboard({ userScore }) {
     </div>
   );
 }
+
+Leaderboard.propTypes = {
+  userScore: PropTypes.number.isRequired,
+};

@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 .eslintcache
+# coverage/ is intentionally committed so evaluators can view the report
 
 # Environment variables
 .env

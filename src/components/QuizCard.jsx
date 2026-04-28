@@ -1,5 +1,6 @@
 import { memo, useCallback } from 'react';
 import { CheckCircle, XCircle } from 'lucide-react';
+import PropTypes from 'prop-types';
 
 const QuizCard = memo(function QuizCard({ 
   question, 
@@ -88,5 +89,16 @@ const QuizCard = memo(function QuizCard({
     </div>
   );
 });
+
+QuizCard.propTypes = {
+  question:       PropTypes.string.isRequired,
+  options:        PropTypes.arrayOf(PropTypes.string).isRequired,
+  selectedOption: PropTypes.number,
+  isAnswered:     PropTypes.bool.isRequired,
+  correctIndex:   PropTypes.number.isRequired,
+  explanation:    PropTypes.string.isRequired,
+  onSelect:       PropTypes.func.isRequired,
+  getOptionState: PropTypes.func.isRequired,
+};
 
 export default QuizCard;

@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import PropTypes from 'prop-types';
 
 const StatusBadge = memo(function StatusBadge({ label, variant = 'muted' }) {
   const variants = {
@@ -16,5 +17,10 @@ const StatusBadge = memo(function StatusBadge({ label, variant = 'muted' }) {
     </span>
   )
 });
+
+StatusBadge.propTypes = {
+  label:   PropTypes.string.isRequired,
+  variant: PropTypes.oneOf(['saffron', 'ashoka', 'success', 'danger', 'muted', 'warning']),
+};
 
 export default StatusBadge;
