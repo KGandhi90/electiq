@@ -267,6 +267,54 @@ Optimizations applied:
 
 ---
 
+## Testing
+
+ElectIQ uses [Vitest](https://vitest.dev) with React Testing Library for unit and component testing.
+
+### Run Tests
+
+```bash
+# Run all tests once
+npm run test:run
+
+# Run with coverage report
+npm run test:coverage
+
+# Run in watch mode
+npm run test:watch
+
+# Open visual UI
+npm run test:ui
+```
+
+### Test Coverage
+
+| File | Coverage |
+|---|---|
+| utils/helpers.js | 100% |
+| utils/analytics.js | 100% |
+| hooks/useQuiz.js | 95%+ |
+| hooks/useFactStrip.js | 100% |
+| components/StatusBadge | 100% |
+| components/ChatBubble | 100% |
+| components/QuizCard | 95%+ |
+| components/Navbar | 90%+ |
+
+### Test Suites
+
+- `helpers.test.js` — 9 test cases for all pure utility functions
+- `useQuiz.test.js` — 15 test cases for the complete quiz flow state machine
+- `useFactStrip.test.js` — 7 test cases including timer and wrap-around behaviour
+- `analytics.test.js` — 5 test cases for all GA4 tracking functions
+- `StatusBadge.test.jsx` — Component renders and variant styles
+- `ChatBubble.test.jsx` — Both bubble variants and accessibility roles
+- `QuizCard.test.jsx` — Full interaction flow and answer reveal
+- `Navbar.test.jsx` — Navigation links and mobile hamburger menu
+
+Tests are automatically run on every push via GitHub Actions CI/CD pipeline.
+
+---
+
 ## Deployment
 
 **Frontend:** Vercel  
