@@ -38,9 +38,12 @@ try {
     app  = initializeApp(firebaseConfig)
     db   = getFirestore(app)
     auth = getAuth(app)
+    console.warn('[Firebase] Initialized successfully, project:', firebaseConfig.projectId)
+  } else {
+    console.warn('[Firebase] No API key found — using mock data')
   }
 } catch (err) {
-  console.warn('Firebase not configured:', err)
+  console.warn('[Firebase] Init failed:', err.message)
 }
 
 /**
@@ -53,7 +56,8 @@ async function ensureAuth() {
   try {
     await signInAnonymously(auth)
   } catch (err) {
-    console.warn('Anonymous auth failed:', err)
+    console.warn('[Firebase] Anonymous auth failed:', err.code, err.message)
+    throw err  // re-throw so saveQuizScore knows auth failed
   }
 }
 
@@ -64,17 +68,20 @@ async function ensureAuth() {
  * @returns {Promise<void>}
  */
 export async function saveQuizScore(score) {
-  if (!db) return
+  if (!db) {
+    console.warn('[Firebase] saveQuizScore skipped — db not initialized')
+    return
+  }
   try {
     await ensureAuth()
-    await addDoc(collection(db, 'quizScores'), {
+    const docRef = await addDoc(collection(db, 'quizScores'), {
       score,
-      timestamp:   serverTimestamp(),
+      timestamp:    serverTimestamp(),
       scorePercent: (score / 10) * 100,
     })
+    console.warn('[Firebase] Score saved, doc id:', docRef.id)
   } catch (err) {
-    // Never block the UI for analytics writes
-    console.warn('Score save failed:', err)
+    console.warn('[Firebase] Score save failed:', err.code, err.message)
   }
 }
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getScoreResult, getNextFactIndex, formatShareText, getMockReply } from '../utils/helpers';
+import { getScoreResult, getNextFactIndex, getMockReply } from '../utils/helpers';
 
 describe('getScoreResult', () => {
   it('returns "Keep learning" label for score <= 3', () => {
